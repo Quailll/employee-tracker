@@ -1,5 +1,7 @@
-const Sequelize = require('sequalize');
+//TODO create requires for sequelize
 
-const sequelize = new Squelize("mysq://root:Thyia@i89ak3895tt@localhost:3001//emplyees_tracker");
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize(process.env.CONNECTION);
 
 module.exports = sequelize;
