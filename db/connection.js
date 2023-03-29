@@ -1,7 +1,7 @@
 //TODO create requires for sequelize
 
-const Sequelize = require('sequelize');
+const mysql = require('mysql2');
 
-const sequelize = new Sequelize(process.env.CONNECTION);
+const connection = mysql.createConnection(process.env.CONNECTION);
 
-module.exports = sequelize;
+module.exports = connection;
