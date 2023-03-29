@@ -134,9 +134,8 @@ const addEmployee= () => {
     case 'yes':
       db.query('INSERT INTO employee SET ?', employee, err=>{
           if(err) {
-            delete employee.manager
             console.log(err)
-          }
+        }
         })
         question();
         break;
@@ -144,65 +143,101 @@ const addEmployee= () => {
       inquirer.prompt([{
         type: 'input',
         name: 'manager_id',
-        message: 'id of the managar for employee.'
-      }]);
-        db.query('INSERT INTO employee SET ?', )
-          break;
+        message: 'enter id of manager of employee.'
+      }])
+        .then((subordinate)=> {
+        delete employee.manager
+        let newEmployee = {
+          ...employee,
+          manager_id: subordinate.manager_id
         }
+          db.query('INSERT INTO employees SET ?', newEmployee, err=> {
+          if(err) {
+            console.log(err)
+        }
+        question()
       })
       
-      question()
-    }
-    
+    })
+  } 
+})  
+};
     
     const updateEmployeeRole= () => {
-      inquirer.prompt
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "id",
+            message: "id of employee to update?",
+          },
+          {
+            type: "input",
+            name: "first_name",
+            message: "first name of employee?",
+          },
+          {
+            type: "input",
+            name: "last_name",
+            message: "last name of employee?",
+          },
+          {
+            type: "input",
+            name: "role_id",
+            message: "role id of employee?",
+          },
+          {
+            type: "input",
+            name: "manager_id",
+            message: "manager id of employee?",
+          },
+        ])
+        .then((updatedEmployee) => {
+          db.query(
+            `UPDATE employees SET ? WHERE id =${updatedEmployee.id}`,
+            updatedEmployee,
+            (err) => {
+              console.log(err);
+            }
+          );
+          console.log("employee updated!");
+          question();
+        });
+
     }
     
 const viewAllDepartments = () => {
-  inquirer.prompt([{
-    type: 'input',
-     name: 'name',
-     message: 'Which department would you like to look at?'
-  }])
-  db.query('SELECT * FROM departments', (err, res) => {
+  
+  db.query('SELECT * FROM department', (err, department) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(res);
+      console.log(department);
       question();
     }
     })
   }
     
     const viewAllRoles= () => {
-      inquirer.prompt([{
-        type: 'list',
-        name: 'name',
-        message: 'Which role would you like to look at?'
-      }])
-      db.query('SELECT * FROM role', (err, role) => {
-        if (err) {
-          console.error(err);
-          question();
-        } else {
-          console.table(roles);
-          question();
-          return roles;
-        }
-      })
+       db.query("SELECT * FROM role", (err, role) => {
+         if (err) {
+           console.log(err);
+         } else {
+           console.log(role);
+           question();
+         }
+       });
     }
     
-    const viewallemployees= () => {
-      inquirer.prompt([{
-        type: 'list',
-        name: 'name',
-        message: 'Which employee would you like to look at?'
-      }])
-      db.query('SELECT * FROM employee', (err, employee) => {
-        (err) ? console.error(err):
-        console.table(employee)
-        question()
-    })
+    const viewAllEmployees= () => {
+       db.query("SELECT * FROM employee", (err, employee) => {
+         if (err) {
+           console.log(err);
+         } else {
+           console.log(employee);
+           question();
+         }
+       });
     }
+
 question();
