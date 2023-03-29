@@ -2,9 +2,10 @@
 
 require("dotenv").config();
 const inquirer = require("inquirer");
-const mysql = reuire("mysql2");
+const mysql = require("mysql2");
 const connection = require('connection');
-const db = require('./db');
+const db = require('./db/connection');
+require('console.table');
 
 //TODO setup main prompts that will show up first
 const question = () =>  {
@@ -46,44 +47,6 @@ const question = () =>  {
   })
 }
 
-const viewAllDepartments = () => {
-  inquirer.prompt([{
-    type: 'list',
-    name: 'name',
-    message: 'Which department would you like to look at?'
-  }])
-  db.query('SELECT * FROM departments', (err, departments) => {
-    (err) ? console.error(err)
-    console.table(department)
-    question()
-  })
-}
-
-const viewAllroles= () => {
-  inquirer.prompt([{
-    type: 'list',
-    name: 'name',
-    message: 'Which role would you like to look at?'
-  }])
-  db.query('SELECT * FROM role', (err, role) => {
-    (err) ? console.error(err)
-    console.table(role)
-    question()
-  })
-}
-
-const viewallemployees= () => {
-  inquirer.prompt([{
-    type: 'list',
-    name: 'name',
-    message: 'Which employee would you like to look at?'
-  }])
-  db.query('SELECT * FROM employee', (err, employee) => {
-    (err) ? console.error(err)
-    console.table(employee)
-    question()
-})
-}
 
 const addDepartment = () => {
   inquirer.prompt([{
@@ -95,11 +58,13 @@ const addDepartment = () => {
     console.log(departmentName)
     
     db.query('INSERT INTO department SET ?', departmentName, err => {
-      (err) ? console.error(err)
-  })
+      if(err) {
+            console.log(err)
+          }
+    })
     
     question()
-})
+  })
 }
 
 const addRole = () => {
@@ -118,15 +83,17 @@ const addRole = () => {
     name: 'department_id',
     message: 'what is the id of the role in the department?'
   }
-  ])
-  .then(role =>{
-    console.log(role)
-    
-    db.query('INSERT INTO role SET ?', role, err => {
-      (err) ? console.error(err)
+])
+.then(role =>{
+  console.log(role)
+  
+  db.query('INSERT INTO role SET ?', role, err => {
+    if(err) {
+            console.log(err)
+          }
   })
-    
-    question()
+  
+  question()
 })
 }
 
@@ -147,23 +114,74 @@ const addEmployee= () => {
     message: "role's id?"
   },
   {
-    type: '',
-    name: '',
-    message: ''
+    type: 'list',
+    name: 'manager',
+    message:['yes', 'no']
   }
-  ])
-  .then(roleName =>{
-    console.log(roleName)
+])
+.then(init => {
+  switch(init.manager){
+    case 'yes':
+      db.query('INSERT INTO employee SET ?', employee, err=>{
+          if(err) {
+            console.log(err)
+          }
+        })
+        question();
+        break;
+        case 'no':
+          inquirer.prompt([{
+            type: 'input',
+            name: 'manager_id',
+            message: 'Id of the managar for employee.'
+          }])
+          .then
+        }
+      })
+      
+      question()
+    }
     
-    db.query('INSERT INTO department SET ?', roleName, err => {
-      (err) ? console.error(err)
-  })
     
+    const updateEmployeeRole= () => {
+      inquirer.prompt
+    }
+    
+const viewAllDepartments = () => {
+  inquirer.prompt([{
+    type: 'list',
+     name: 'name',
+     message: 'Which department would you like to look at?'
+  }])
+  db.query('SELECT * FROM departments', (err, departments) => {
+    (err) ? console.error(err)
+    console.table(department)
     question()
-})
-}
-
-const updateEmployeeRole= () => {
-  inquirer.prompt
-}
-
+    })
+  }
+    
+    const viewAllroles= () => {
+      inquirer.prompt([{
+        type: 'list',
+        name: 'name',
+        message: 'Which role would you like to look at?'
+      }])
+      db.query('SELECT * FROM role', (err, role) => {
+        (err) ? console.error(err)
+        console.table(role)
+        question()
+      })
+    }
+    
+    const viewallemployees= () => {
+      inquirer.prompt([{
+        type: 'list',
+        name: 'name',
+        message: 'Which employee would you like to look at?'
+      }])
+      db.query('SELECT * FROM employee', (err, employee) => {
+        (err) ? console.error(err)
+        console.table(employee)
+        question()
+    })
+    }
