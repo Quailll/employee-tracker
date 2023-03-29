@@ -134,8 +134,8 @@ const addEmployee= () => {
             type: 'input',
             name: 'manager_id',
             message: 'Id of the managar for employee.'
-          }])
-          .then
+          }]);
+          break;
         }
       })
       
