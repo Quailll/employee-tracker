@@ -1,50 +1,60 @@
 //TODO create requires for all the npm that I'm going to use. sequelize might not be used.
 
-require("dotenv").config();
-const inquirer = require("inquirer");
-const mysql = require("mysql2");
-const connection = require('connection');
 const db = require('./db/connection');
+const mysql = require("mysql2");
+const inquirer = require("inquirer");
 require('console.table');
+
+
 
 //TODO setup main prompts that will show up first
 const question = () =>  {
- inquirer.prompt([
-  {
-    type:'list',
-    name: 'choice',
-    message: 'What is your choice?',
-    choices: ['View All Departments', 'View All roles', 'View all employees', 'Add Department', 'Add Role', 'Add Employee', 'Update Employee Role', 'Done' ]
-  }
-])
-  .then(init => {
-    switch(init.choice) {
-      case 'View All Departments':
-        viewAllDepartments();
-      break;
-      case 'View All roles':
-        viewAllRoles();
-      break;
-      case 'View All employees':
-        viewAllEmployees();
-      break;
-      case 'Add Department':
-        addDepartment();
-      break;
-      case 'Add Role':
-        addRole();
-      break;
-      case 'Add Employee':
-        addEmployee();
-      break;
-      case 'Update Employee Role':
-        updateEmployeeRole();
-      break;
-      case 'quit':
-        console.log('quit')
-      break;
-    }
-  })
+ inquirer
+   .prompt([
+     {
+       type: "list",
+       name: "answer",
+       message: "What is your choice?",
+       choices: [
+         "View All Departments",
+         "View All Roles",
+         "View all Employees",
+         "Add Department",
+         "Add Role",
+         "Add Employee",
+         "Update Employee Role",
+         "Quit",
+       ],
+     },
+   ])
+   .then((res) => {
+     switch (res.answer) {
+       case "View All Departments":
+         viewAllDepartments();
+         break;
+       case "View All Roles":
+         viewAllRoles();
+         break;
+       case "View All Employees":
+         viewAllEmployees();
+         break;
+       case "Add Department":
+         addDepartment();
+         break;
+       case "Add Role":
+         addRole();
+         break;
+       case "Add Employee":
+         addEmployee();
+         break;
+       case "Update Employee Role":
+         updateEmployeeRole();
+         break;
+       case "Quit":
+         console.log("quit");
+         break;
+     }
+   });
 }
 
 
@@ -116,7 +126,7 @@ const addEmployee= () => {
   {
     type: 'list',
     name: 'manager',
-    message:['yes', 'no']
+    choices:['yes', 'no']
   }
 ])
 .then(init => {
@@ -124,17 +134,19 @@ const addEmployee= () => {
     case 'yes':
       db.query('INSERT INTO employee SET ?', employee, err=>{
           if(err) {
+            delete employee.manager
             console.log(err)
           }
         })
         question();
         break;
-        case 'no':
-          inquirer.prompt([{
-            type: 'input',
-            name: 'manager_id',
-            message: 'Id of the managar for employee.'
-          }]);
+    case 'no':
+      inquirer.prompt([{
+        type: 'input',
+        name: 'manager_id',
+        message: 'id of the managar for employee.'
+      }]);
+        db.query('INSERT INTO employee SET ?', )
           break;
         }
       })
@@ -149,27 +161,35 @@ const addEmployee= () => {
     
 const viewAllDepartments = () => {
   inquirer.prompt([{
-    type: 'list',
+    type: 'input',
      name: 'name',
      message: 'Which department would you like to look at?'
   }])
-  db.query('SELECT * FROM departments', (err, departments) => {
-    (err) ? console.error(err)
-    console.table(department)
-    question()
+  db.query('SELECT * FROM departments', (err, res) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(res);
+      question();
+    }
     })
   }
     
-    const viewAllroles= () => {
+    const viewAllRoles= () => {
       inquirer.prompt([{
         type: 'list',
         name: 'name',
         message: 'Which role would you like to look at?'
       }])
       db.query('SELECT * FROM role', (err, role) => {
-        (err) ? console.error(err)
-        console.table(role)
-        question()
+        if (err) {
+          console.error(err);
+          question();
+        } else {
+          console.table(roles);
+          question();
+          return roles;
+        }
       })
     }
     
@@ -180,8 +200,9 @@ const viewAllDepartments = () => {
         message: 'Which employee would you like to look at?'
       }])
       db.query('SELECT * FROM employee', (err, employee) => {
-        (err) ? console.error(err)
+        (err) ? console.error(err):
         console.table(employee)
         question()
     })
     }
+question();
